@@ -7,7 +7,7 @@ from DIC_MapReduce_A1 import *
 
 if __name__ == "__main__":
 
-    myjob1 = WordCount()
+    myjob1 = CategoryWordCounter()
     with myjob1.make_runner() as runner:
         runner.run()
 

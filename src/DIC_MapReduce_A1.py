@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 
+import os
 import re
 import json
 from mrjob.job import MRJob
 from mrjob.step import MRStep
+from nltk.stem.porter import *
 
 ### Exercise requirements:
 """
@@ -17,7 +19,7 @@ For preprocessing, make sure to perform the following steps:
 - Tokenization to unigrams, using whitespaces, tabs, digits, and
 the characters ()[]{}.!?,;:+=-_"'`~#@&*%€$§\/ as delimiters
 - Case folding
-- Stopword filtering</strong>: use the stop word list (stopwords.txt)
+- Stopword filtering: use the stop word list (stopwords.txt)
         
 In addition, filter out all tokens consisting of only one character
         
@@ -29,17 +31,45 @@ the top 75 terms per category
 """
 
 
-class WordCount(MRJob):
+class CategoryWordCounter(MRJob):
 
     def mapper(self, _, line):
+        # Parse JSON line to Python dictionary
         json_line = json.loads(line)
-        review_text = json_line["reviewText"]
+        # Get review text and category. The review text is already case folded here
+        review_text = json_line["reviewText"].lower()
+        category = json_line["category"]
+        # Initialize the Porter stemmer, useful later
+        stemmer = PorterStemmer()
 
-        # This line needs a fix, there are too many ngrams coming out of the filter
-        review_words = re.findall(r"\b\w+\b", review_text.lower())
+        # Load stopwords from file
+        stopwords = set()
+        stopwords_file = os.path.join(os.path.dirname(__file__), "../data/stopwords.txt")
+        with open(stopwords_file, "r") as file:
+            for word in file:
+                stopwords.add(word.strip())
 
+        # Tokenization to unigrams using delimiters
+        pattern = r"[ \t0-9\(\)\[\]\{\}\.\!\?,;:\+=\-_\"'`~#@&*%€$§\\/|<>^]+"
+        review_words = re.split(pattern, review_text)
+
+        # Stopword filtering and stemming words
+        review_words = [
+            stemmer.stem(word) # With stemming, we get around 70000 ngrams
+            # word # Without stemming, we get around 100000 ngrams
+            for word in review_words
+            if len(word) > 1 and word not in stopwords
+        ]
+
+        # Set to remember if a (category, word) pair has already been yielded
+        # This allows to only count corpuses instead of individual words
+        yielded_keys = set()
+        
         for word in review_words:
-            yield (word, 1)
+            if (category, word) not in yielded_keys:
+                yielded_keys.add((category, word))
+                yield ((category,word), 1)
+                            
 
     def combiner(self, key, values):
         yield (key, sum(values))
