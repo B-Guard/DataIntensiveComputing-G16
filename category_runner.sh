@@ -1,0 +1,1 @@
+python3 src/category_runner.py ./data/reviews_devset.json > ./data/category_set.txt
