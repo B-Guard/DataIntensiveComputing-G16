@@ -131,10 +131,20 @@ class ChiSquare(MRJob):
             yield (cat, (word, aggregated_words[word]))
 
     def reducer(self, cat, w_abcd):
+        aggregated_words = dict()
+        # Aggregate all words and their ABCD values
+        for word, abcd in w_abcd:
+            if word not in aggregated_words.keys():
+                aggregated_words[word] = abcd
+            else:
+                aggregated_words[word]["A"] += abcd["A"]
+                aggregated_words[word]["B"] += abcd["B"]
+                aggregated_words[word]["C"] += abcd["C"]
+                aggregated_words[word]["D"] += abcd["D"]
         # Each reducer task receives a category and a list of words with their ABCD values
         chis = dict()
         # Then compute chi-square values for each word
-        for word, abcd in w_abcd:
+        for word, abcd in aggregated_words.items():
             # N is the total number of documents, which can be retrieved from any word like so
             A, B, C, D = abcd["A"], abcd["B"], abcd["C"], abcd["D"]
             N = A + B + C + D
