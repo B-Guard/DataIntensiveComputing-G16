@@ -111,31 +111,32 @@ class ChiSquare(MRJob):
                 w["D"] = self.total_docs - w["C"] - w["A"] - w["B"]
                 yield (cat, (word, w))
 
+    def combiner(self, cat, w_abcd):
+        aggregated_words = dict()
+        # Aggregate all words and their ABCD values
+        for word, abcd in w_abcd:
+            if word not in aggregated_words.keys():
+                aggregated_words[word] = abcd
+            else:
+                aggregated_words[word]["A"] += abcd["A"]
+                aggregated_words[word]["B"] += abcd["B"]
+                aggregated_words[word]["C"] += abcd["C"]
+                aggregated_words[word]["D"] += abcd["D"]
+        for word in aggregated_words.keys():
+            yield (cat, (word, aggregated_words[word]))
+
     def reducer(self, cat, w_abcd):
         # Each reducer task receives a category and a list of words with their ABCD values
-        aggregated_words_n_cats = dict()
         chis = dict()
-        # First aggregate all words and their ABCD values
-        for word, abcd in w_abcd:
-            if word not in aggregated_words_n_cats.keys():
-                aggregated_words_n_cats[word] = abcd
-            else:
-                aggregated_words_n_cats[word]["A"] += abcd["A"]
-                aggregated_words_n_cats[word]["B"] += abcd["B"]
-                aggregated_words_n_cats[word]["C"] += abcd["C"]
-                aggregated_words_n_cats[word]["D"] += abcd["D"]
         # Then compute chi-square values for each word
-        for word in aggregated_words_n_cats.keys():
-            w = aggregated_words_n_cats[word]
+        for word, abcd in w_abcd:
             # N is the total number of documents, which can be retrieved from any word like so
-            N = w["A"] + w["B"] + w["C"] + w["D"]
-            chis[word] = N * (w["A"] * w["D"] - w["B"] * w["C"]) ** 2 / (
-                (w["A"] + w["C"])
-                * (w["B"] + w["D"])
-                * (w["A"] + w["B"])
-                * (w["C"] + w["D"])
-            +1) # Sounds sketchy, but we get division by zero otherwise
-            
+            A, B, C, D = abcd["A"], abcd["B"], abcd["C"], abcd["D"]
+            N = A + B + C + D
+            chis[word] = (
+                N * (A * D - B * C) ** 2 / ((A + C) * (B + D) * (A + B) * (C + D) + 1)
+            )  # Sounds sketchy to add +1, but we get division by zero otherwise
+
         # Sort by chi-square value and yield the top 75
         chis = dict(sorted(chis.items(), key=lambda item: item[1], reverse=True))
         chis = dict(list(chis.items())[:75])
@@ -147,6 +148,7 @@ class ChiSquare(MRJob):
                 mapper_init=self.load,
                 mapper=self.mapper,
                 mapper_final=self.mapper_final,
+                combiner=self.combiner,
                 reducer=self.reducer,
             )
         ]
