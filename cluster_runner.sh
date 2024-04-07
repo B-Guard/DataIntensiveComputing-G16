@@ -1,6 +1,8 @@
 #!/bin/bash
 
 
-# Runner script for running the hadoop job on the cluster
-# Uses the small dataset for testing
-python3 src/mr_runner.py --hadoop-streaming-jar /usr/lib/hadoop/tools/lib/hadoop-streaming-3.3.5.jar -r hadoop hdfs:///user/dic24_shared/amazon-reviews/full/reviews_devset.json > ./logs/output_$(date +%d--%H-%M-%S).txt
+# Dev set
+python3 src/runner_chi.py --hadoop-streaming-jar /usr/lib/hadoop/tools/lib/hadoop-streaming-3.3.5.jar -r hadoop --files=./data/stopwords.txt,./data/category_set.txt hdfs:///user/dic24_shared/amazon-reviews/full/reviews_devset.json > ./results/devset.txt
+
+# Full data set
+python3 src/runner_chi.py --hadoop-streaming-jar /usr/lib/hadoop/tools/lib/hadoop-streaming-3.3.5.jar -r hadoop --files=./data/stopwords.txt,./data/category_set.txt hdfs:///user/dic24_shared/amazon-reviews/full/reviewscombined.json > ./results/full.txt
