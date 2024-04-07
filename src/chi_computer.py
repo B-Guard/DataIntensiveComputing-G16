@@ -30,6 +30,8 @@ the top 75 terms per category
 - Merge the lists over all categories
 """
 
+STEM = True
+
 
 def load_file_as_set(file):
     contents = set()
@@ -71,11 +73,14 @@ class ChiSquare(MRJob):
         review_words = review_words - self.stopwords
         # Stemming
         condensed_review_words = set()
-        for w in review_words:
-            if w not in self.stemmed_words.keys():
-                self.stemmed_words[w] = self.stemmer.stem(w)
-            condensed_review_words.add(self.stemmed_words[w])
-        return category, condensed_review_words - set("")
+        if STEM:
+            for w in review_words:
+                if w not in self.stemmed_words.keys():
+                    self.stemmed_words[w] = self.stemmer.stem(w)
+                condensed_review_words.add(self.stemmed_words[w])
+            return category, condensed_review_words - set("")
+        else:
+            return category, review_words - set("")
 
     def mapper(self, _, line):
         # Get category and words in document (review)
