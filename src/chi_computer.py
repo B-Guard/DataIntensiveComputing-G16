@@ -5,6 +5,7 @@ import re
 import json
 from mrjob.job import MRJob
 from mrjob.step import MRStep
+from mrjob.protocol import JSONValueProtocol
 from nltk.stem.porter import *
 
 ### Exercise requirements:
@@ -43,6 +44,8 @@ def load_file_as_set(file):
 
 class ChiSquare(MRJob):
 
+    INPUT_PROTOCOL = JSONValueProtocol
+
     def load(self):
         # Load stopwords and categories
         self.stopwords = frozenset(load_file_as_set("stopwords.txt"))
@@ -56,10 +59,8 @@ class ChiSquare(MRJob):
         # Keep track of processed documents
         self.total_docs = 0
 
-    def process_line(self, line):
+    def process_line(self, json_line):
         ### Preprocessing
-        # Parse JSON line to Python dictionary
-        json_line = json.loads(line)
         # Get review text and category. The review text is already case folded here
         review_text = json_line["reviewText"].lower()
         category = json_line["category"]

@@ -2,11 +2,14 @@
 import json
 from mrjob.job import MRJob
 from mrjob.step import MRStep
+from mrjob.protocol import JSONValueProtocol
 
 class CategoryCounter(MRJob):
 
+    INPUT_PROTOCOL = JSONValueProtocol
+
     def line_processor(self, _, line):
-        yield None, json.loads(line)["category"]
+        yield None, line["category"]
 
     def reducer(self, _, words):
         cat_set = set(words)
@@ -17,7 +20,6 @@ class CategoryCounter(MRJob):
         return [
             MRStep(
                 mapper=self.line_processor,
-
                 reducer=self.reducer
             )
         ]
