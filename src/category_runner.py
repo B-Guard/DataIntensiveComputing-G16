@@ -1,4 +1,5 @@
-import json
+#!/usr/bin/env python3
+
 from category_counter import CategoryCounter
 if __name__ == '__main__':
     

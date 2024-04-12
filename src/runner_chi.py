@@ -1,4 +1,5 @@
-import json
+#!/usr/bin/env python3
+
 from chi_computer import ChiSquare
 
 if __name__ == "__main__":

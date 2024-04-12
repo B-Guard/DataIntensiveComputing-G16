@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import json
+
 from mrjob.job import MRJob
 from mrjob.step import MRStep
 from mrjob.protocol import JSONValueProtocol

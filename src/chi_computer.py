@@ -2,7 +2,6 @@
 
 import os
 import re
-import json
 import heapq
 from mrjob.job import MRJob
 from mrjob.step import MRStep
