@@ -3,6 +3,7 @@
 import os
 import re
 import json
+import heapq
 from mrjob.job import MRJob
 from mrjob.step import MRStep
 from mrjob.protocol import JSONValueProtocol
@@ -34,7 +35,7 @@ the top 75 terms per category
 STEM = True
 
 
-def load_file_as_set(file):
+def load_file_as_set(file: str) -> set:
     contents = set()
     with open(file, "r") as file:
         for word in file:
@@ -42,7 +43,15 @@ def load_file_as_set(file):
     return contents
 
 
+def compute_chi(
+    N: int, A: int, B: int, C: int, D: int
+) -> float:  # Sounds sketchy to add +1, but we get division by zero otherwise
+    return N * (A * D - B * C) ** 2 / ((A + C) * (B + D) * (A + B) * (C + D) + 1)
+
+
 class ChiSquare(MRJob):
+
+    K = 75
 
     INPUT_PROTOCOL = JSONValueProtocol
 
@@ -149,14 +158,12 @@ class ChiSquare(MRJob):
             # N is the total number of documents, which can be retrieved from any word like so
             A, B, C, D = abcd["A"], abcd["B"], abcd["C"], abcd["D"]
             N = A + B + C + D
-            chis[word] = (
-                N * (A * D - B * C) ** 2 / ((A + C) * (B + D) * (A + B) * (C + D) + 1)
-            )  # Sounds sketchy to add +1, but we get division by zero otherwise
+            chis[word] = compute_chi(N, A, B, C, D)
 
-        # Sort by chi-square value and yield the top 75
-        chis = dict(sorted(chis.items(), key=lambda item: item[1], reverse=True))
-        chis = dict(list(chis.items())[:75])
-        yield cat, chis
+        # Retrieve top K words with highest chi-square values
+        top_chis = heapq.nlargest(self.K, chis, key=chis.get)
+        top_words = {word: chis[word] for word in top_chis}
+        yield cat, top_words
 
     def steps(self):
         return [
