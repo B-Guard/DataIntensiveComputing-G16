@@ -1,0 +1,98 @@
+---
+title: "Data Intensive Computing"
+author: "Brais, Dinesh, Arash Behaein\n\n{11111111}, {22222222}, {12324255}"
+date: "Summer 2024"
+output:
+  pdf_document: default
+  html_document: default
+subtitle: "Exercise-1"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introduction:
+
+<font size="4">In this Exercise, the mission is to find the most discriminative words in each 
+category by going through Amazon Review Dataset 2014 which contains millions of
+reviews on 24 product categories by calculating the value of \( \chi^2_{tc} \) 
+for these words.
+
+
+In the end we are going to output the top 75 words in each category with highest
+\( \chi^2_{tc} \) value in a descending order.
+To Achieve this goal, we are going to use a stopwords.txt file which will be 
+used to filter out all the irrelevant words such as "a", "an", "with" etc. and 
+we are going to write a MapReduce job for the required calculations. also,
+mrjob library has been used for implementation of MapReduce job to simplify the
+process of pre-processing and running the code on cluster. mrjob library,
+helps efficiently implement the pre-processing steps required for text 
+classification steps, such as tokenization, case folding, stopword filtering, 
+and calculating chi-square values for discriminating terms. Additionally, mrjob 
+facilitates solid integration with Hadoop clusters, ensuring scalability and 
+performance when processing large datasets.</font>
+
+## Problem Overview:
+
+<font size="4">The full task involves processing a large text corpus (Amazon Review Dataset 2014) 
+to select discriminative terms for text classification. dataset contains millions 
+of reviews across 24 product categories. The main challenges to deal with is this 
+task are efficient data processing to calculate chi-square values and selecting 
+the top 75 discriminative terms for each category.
+
+to calculate \( \chi^2_{tc} \) we are going to use the following formula:</font>
+
+
+$$ \chi^2_{tc} = \frac{(N(AD - BC)^2)}{(A + B)(A + C)(B + D)(C + D)} $$
+
+
+<font size="4">The values of A, B, C, D and N are defined as follows:
+
+* A = Frequency of term in the same category
+* B = Frequency of term in different categories
+* C = Frequency of non-term in the same category
+* D = Frequency of non-term in different categories
+* N = Total Number of Documents or category frequency(total)</font>
+
+
+## Approach and Methodology: 
+
+<font size="4">Our approach to solve the task contains four steps:
+
+First step contains the pre_processing job which includes Tokenization, case-folding
+(to make sure all the text is in lower-case format for consistency) and filtering
+using the "stopwords.txt" file which contains all the irrelevant words to our 
+experiment.
+
+Second step, using the category_counter.py we find the unique categories in the
+dataset and count the number of times the were occured in the document.
+
+third step: this step contains calculationg the chi_square for different terms
+inside the document based on the formula and values that was defiend above.
+the chi_compute.py contains:
+
+* Mapper: Which pre-process each line of input, tokenize the review text, remove 
+  unnecessary words based on stopword.txt, and performs stemming. The mapper 
+  emits key-value pairs with the category as the key and words as the value.
+* Combiner and Reducer:  aggregate word counts and calculate chi-square values 
+  for each word in each category. Chi-square values are sorted in descending 
+  order, and the top 75 terms per category are preserved.
+  
+Running the whole code step by step:
+  
+* 1. category_Runner.py: calls the category_counter.py job to count category 
+occurrences and print a text file which contains the unique categories in the document.
+* 2. mr_runner: calls the chi_computer.py, for calculating chi-square values, and 
+generates output in the specified format (output.txt).</font>
+
+## Conclusion:
+
+<font size="4">In conclusion, our approach effectively addresses the task of 
+selecting discriminative terms for text classification using MapReduce and mr-Job. 
+By pre-processing the data, counting category occurrences, and calculating 
+\( \chi^2_{tc} \) values, we identified terms that exhibit significant 
+differences between categories.</font>
+
+
+
