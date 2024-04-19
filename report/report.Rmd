@@ -1,10 +1,10 @@
 ---
 title: "Data Intensive Computing"
-subtitle: "Exercise 1"
+subtitle: "SS2024 - Exercise 1"
 author: 
-  - Arash Behaein
-  - Dinesh
-  - Brais Guardado Collazo
+  - Arash Behaein - 12324255
+  - Dinesh - xxxxxxxx
+  - Brais Guardado Collazo - 12233000
 date: "`r format(Sys.time(), '%d-%m-%Y')`"
 output:
   pdf_document:
@@ -12,19 +12,21 @@ output:
     toc_depth: 3
     number_sections: true
     fig_caption: true
+fontsize: 12pt
+links-as-notes: true
 editor_options: 
   markdown: 
-    wrap: 80
+    wrap: 72
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# Introduction:
+# Introduction
 
-<font size="4">In this Exercise, the mission is to find the most discriminative words in each 
-category by going through Amazon Review Dataset 2014 which contains millions of
+In this Exercise, the mission is to find the most discriminative words in each 
+category by going through [Amazon Review Dataset 2014](https://cseweb.ucsd.edu/~jmcauley/datasets/amazon/links.html) which contains millions of
 reviews on 22 product categories by calculating the value of \( \chi^2_{tc} \) 
 for these words.
 
@@ -32,42 +34,46 @@ for these words.
 In the end we are going to output the top 75 words in each category with highest
 \( \chi^2_{tc} \) value in a descending order.
 To achieve this goal, we are going to use a stopwords.txt file which will be 
-used to filter out all the irrelevant words such as "a", "an", "with" etc. and 
-we are going to write a MapReduce job for the required calculations. also,
-mrjob library has been used for implementation of MapReduce job to simplify the
+used to filter out all the irrelevant words such as *a*, *an*, *with* etc. and 
+we are going to write a MapReduce job for the required calculations. Also,
+`mrjob` library has been used for implementation of MapReduce job to simplify the
 process of preprocessing and running the code on cluster. mrjob library,
 helps efficiently implement the preprocessing steps required for text 
 classification steps, such as tokenization, case folding, stopword filtering, 
 and calculating chi-square values for discriminating terms. Additionally, mrjob 
 facilitates solid integration with Hadoop clusters, ensuring scalability and 
-performance when processing large datasets.</font>
+performance when processing large datasets.
 
-# Problem Overview:
+# Problem Overview
 
-<font size="4">The full task involves processing a large text corpus (Amazon Review Dataset 2014) 
-to select discriminative terms for text classification. The dataset contains millions 
+The full task involves processing a large text corpus to select discriminative terms for text classification. The dataset contains millions 
 of reviews across 22 product categories. The main challenges to deal with in this 
 task are efficient data processing to calculate chi-square values and selecting 
 the top 75 discriminative terms for each category.
 
-To compute the chi-squared values we are going to use the following formula:</font>
+To compute the chi-squared values we are going to use the following formula:
 
 
 $$ \chi^2_{tc} = \frac{N(AD - BC)^2}{(A + B)(A + C)(B + D)(C + D)} $$
 
 
-<font size="4">The values of $A$, $B$, $C$, $D$ and $N$ are defined as follows:
+The values of $A$, $B$, $C$, $D$ and $N$ are defined as follows:
 
 * $A$: Frequency of term in the same category
 * $B$: Frequency of term in different categories
 * $C$: Frequency of non-term in the same category
 * $D$: Frequency of non-term in different categories
-* $N$: Total Number of Documents or category frequency(total)</font>
+* $N$: Total Number of Documents or category frequency(total)
 
 
-# Approach and Methodology: 
+# Approach and Methodology
 
-<font size="4">Our approach to solve the task contains four steps:
+![High level overview of the pipeline](img/highLevelPipe.png){width=50%}
+![Category Counter](img/categoryCounter.png){width=50%}
+![Chi Computer](img/chiComputer.png){width=50%}
+<!-- To be placed elsewhere!!! -->
+
+Our approach to solve the task contains four steps:
 
 First step contains the preprocessing job which includes tokenization, case-folding
 (to make sure all the text is in lower-case format for consistency) and filtering
@@ -90,18 +96,17 @@ the chi_compute.py contains:
   
 Running the whole code step by step:
   
-* 1. category_Runner.py: calls the category_counter.py job to count category 
+1. `category_runner.py`: calls the `category_counter.py` job to count category 
 occurrences and print a text file which contains the unique categories in the document.
-* 2. mr_runner: calls the chi_computer.py, for calculating chi-square values, and 
-generates output in the specified format (output.txt).</font>
+2. `runner_chi.py`: calls the `chi_computer.py`, for calculating chi-square values, and 
+generates output in the specified format (`output.txt`).
 
-# Conclusion:
+# Conclusion
 
-<font size="4">In conclusion, our approach effectively<!--No, not very effectively --> addresses the task of 
+In conclusion, our approach effectively<!--No, not very effectively --> addresses the task of 
 selecting discriminative terms for text classification using MapReduce and mr-Job. 
 By preprocessing the data, counting category occurrences, and calculating 
 \( \chi^2_{tc} \) values, we identified terms that exhibit significant 
-differences between categories.</font>
-
+differences between categories.
 
 
