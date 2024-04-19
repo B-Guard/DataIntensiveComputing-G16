@@ -44,9 +44,11 @@ def load_file_as_set(file: str) -> set:
 
 def compute_chi(
     N: int, A: int, B: int, C: int, D: int
-) -> float:  # Sounds sketchy to add +1, but we get division by zero otherwise
-    return N * (A * D - B * C) ** 2 / ((A + C) * (B + D) * (A + B) * (C + D) + 1)
-
+) -> float:
+    try:
+        return N * (A * D - B * C) ** 2 / ((A + C) * (B + D) * (A + B) * (C + D))
+    except ZeroDivisionError:
+        return 0.0
 
 class ChiSquare(MRJob):
 
