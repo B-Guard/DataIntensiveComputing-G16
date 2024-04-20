@@ -3,7 +3,7 @@ title: "Data Intensive Computing"
 subtitle: "SS2024 - Exercise 1"
 author: 
   - Arash Behaein - 12324255
-  - Dinesh - xxxxxxxx
+  - Dinesh Thakur - 12334943
   - Brais Guardado Collazo - 12233000
 date: "`r format(Sys.time(), '%d-%m-%Y')`"
 output:
