@@ -2,7 +2,7 @@
 title: "Data Intensive Computing"
 author:
 - "Arash Behaein - 12324255"
-- "Dinesh - xxxxxxxx"
+- "Dinesh Thakur - 12334943"
 - "Brais Guardado Collazo - 12233000"
 date: "`r format(Sys.time(), '%d-%m-%Y')`"
 output:
@@ -37,7 +37,8 @@ of \( \chi^2_{tc} \) for these words.
 Chi-square is a statistical measure commonly used in data analysis to assess the 
 association between categorical variables. It determines whether there is a 
 significant difference between the expected and observed frequencies of a 
-categorical variable.
+categorical variable. Used this measure to evaluate which words were most
+strongly associated with specific product categories.
 
 In this project, chi-square is used to evaluate the significance of each term in 
 discriminating between different product categories based on their occurrence 
@@ -45,7 +46,7 @@ in reviews. By calculating the chi-square value for each term, terms that are
 highly associated with specific categories and are effective discriminators 
 can be identified.
 
-By selecting terms with high chi-square values, you can effectively identify 
+By selecting terms with high chi-square values, we can effectively identify
 the most discriminative terms for each category, which is essential for text 
 classification tasks. In the end, the final result will contain the top 75 words 
 in each category with highest the \( \chi^2_{tc} \) value in a descending order.
@@ -122,7 +123,7 @@ Our approach to solving the task involves four key steps:
 
 ## Pre-processing:
 
-the solution starts with pre-processing the text data to ensure consistency and 
+The solution starts with pre-processing the text data to ensure consistency and
 remove irrelevant words. This includes tokenization, case-folding to convert 
 all text to lowercase, and filtering using a predefined list of stopwords from 
 stopwords.txt.
@@ -167,7 +168,7 @@ knitr::include_graphics("img/categoryCounter.png")
 occurrences and print a text file which contains the unique categories in the 
 document.
   
-* execute runner_chi.py.py to compute chi-square values and generate the output 
+* Execute runner_chi.py.py to compute chi-square values and generate the output
   file output.txt containing the top discriminative terms for each category.
   
 ```{r, echo=FALSE, out.width="30%", fig.align='center', fig.cap="Chi Computer"}
@@ -180,11 +181,34 @@ generates output in the specified format (`output.txt`).
 
 # Conclusion
 
-In conclusion, our approach effectively<!--No, not very effectively --> addresses the task of 
-selecting discriminative terms for text classification using MapReduce and mr-Job. 
-By preprocessing the data, counting category occurrences, and calculating 
-\( \chi^2_{tc} \) values, we identified terms that exhibit significant 
-differences between categories.
+Our approach to identifying the most discriminative terms for text classification using
+the Amazon Review Dataset 2014 has proven to be effective through the application of MapReduce
+and the mrjob library. The following key outcomes were observed:
 
+Data Preprocessing: The rigorous preprocessing phase, which included tokenization,
+case-folding, stopword removal, and stemming, provided a clean and consistent dataset. This
+foundation was crucial for the subsequent analysis, reducing noise and improving term accuracy.
 
+Category Identification: By counting the occurrences of each category in the dataset, we were
+able to assess the distribution of reviews across various product categories. This
+understanding informed our subsequent chi-square calculations, ensuring a balanced approach
+across all categories.
+
+Chi-Square Calculation: The core of our approach was the calculation of chi-square values
+for each term in the dataset. This statistical measure helped us to determine which terms/words
+were the most significant discriminators between different product categories.
+
+MapReduce Implementation: The use of mrjob provided a streamlined way to implement MapReduce jobs.
+This approach made the computation faster and more efficient. The set-based operations and distributed
+computation reduced processing time, allowing us to handle the large dataset effectively.
+The reduce phase allowed us to aggregate results and calculate chi-square values.
+
+Results: Our final output contained the top 75 words for each product category, sorted by their
+chi-square values. These words are the most relevant for distinguishing between categories.
+This outcome can be useful for building text classification models or for gaining insights into
+product review trends.
+
+Overall, we can say that; by following this approach, we successfully identified terms
+that are useful for text classification. The combination of data preprocessing, chi-square
+calculations, and MapReduce enabled us to handle a large dataset efficiently.
 
