@@ -180,11 +180,23 @@ generates output in the specified format (`output.txt`).
 
 # Conclusion
 
-In conclusion, our approach effectively<!--No, not very effectively --> addresses the task of 
-selecting discriminative terms for text classification using MapReduce and mr-Job. 
-By preprocessing the data, counting category occurrences, and calculating 
-\( \chi^2_{tc} \) values, we identified terms that exhibit significant 
-differences between categories.
+In this project, a MapReduce technique was successfully applied to process
+The Amazon Reviews Dataset 2014 with 56gb size for text classification. 
+chi-square values were computed and the top 75 discriminative words in each 
+category extracted and saved. although this approach showed efficiency and 
+importance of MapReduce and mr-job library on large datasets and the final results
+were accurate and as was promised, the runtime performance of the solution 
+demonstrated the need for further optimizations.
+
+Runtime for the sample dataset (reviews_devset.json) both on cluster and local
+machine was about 60-90 seconds while it was about 3hours for the full dataset
+on cluster.
+
+One of the possible ways to improve the runtime performance of the task can be 
+distributing the workload across more mappers, combiners and reducers to
+parallelize computations which can significantly impact the processing time.
+
+
 
 
 
