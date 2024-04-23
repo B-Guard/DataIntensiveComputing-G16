@@ -161,7 +161,6 @@ class ChiSquare(MRJob):
             A, B, C, D = abcd["A"], abcd["B"], abcd["C"], abcd["D"]
             N = A + B + C + D
 
-            # chis[word] = compute_chi(N, A, B, C, D)
             if len(chis) < self.K:
                 heapq.heappush(chis, (compute_chi(N, A, B, C, D), word))
             else:
