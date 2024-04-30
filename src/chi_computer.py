@@ -78,7 +78,7 @@ class ChiSquare(MRJob):
         # Tokenization to unigrams using delimiters
         pattern = r"[ \t0-9\(\)\[\]\{\}\.\!\?,;:\+=\-_\"'`~#@&%*%€$§\\/|<>^]+"
         # Converting to set to count documents instead of words
-        review_words = set(re.split(pattern, review_text))
+        review_words = set(re.split(pattern, review_text)) - set("")
 
         # Removing stopwords
         review_words = review_words - self.stopwords
@@ -153,9 +153,9 @@ class ChiSquare(MRJob):
                 aggregated_words[word]["C"] += abcd["C"]
                 aggregated_words[word]["D"] += abcd["D"]
         # Each reducer task receives a category and a list of words with their ABCD values
-        # chis = dict()
+        # heapq
         chis = []
-        # Then compute chi-square values for each word
+        # Compute chi-square values for each word
         for word, abcd in aggregated_words.items():
             # N is the total number of documents, which can be retrieved from any word like so
             A, B, C, D = abcd["A"], abcd["B"], abcd["C"], abcd["D"]
@@ -167,9 +167,6 @@ class ChiSquare(MRJob):
                 heapq.heappushpop(chis, (compute_chi(N, A, B, C, D), word))
 
         # Retrieve top K words with highest chi-square values
-        # top_chis = heapq.nlargest(self.K, chis, key=chis.get)
-        # top_words = {word: chis[word] for word in top_chis}
-
         top_words = {word: chi for chi, word in heapq.nlargest(self.K, chis)}
         yield cat, top_words
 
