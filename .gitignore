@@ -1,5 +1,8 @@
 __pycache__/
 data/*.json
 logs/
+submission/
 *.pdf
+*.zip
 output.txt
+category_set.txt
