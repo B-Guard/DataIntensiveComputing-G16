@@ -6,3 +6,4 @@ submission/
 *.zip
 output.txt
 category_set.txt
+.ipynb_checkpoints/
