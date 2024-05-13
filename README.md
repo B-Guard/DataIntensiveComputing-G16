@@ -36,3 +36,8 @@ Preprocessing tasks for every document:
 - Filter out stopwords
 - Filter out tokens consisting of only one character
 - *Additional spice added by us*: stem words
+
+
+### Exercise 2
+[Exercise sheet](exercise_sheets/ex2.html)
+

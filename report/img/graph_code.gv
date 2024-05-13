@@ -1,0 +1,69 @@
+digraph Pipeline {
+    node [style=rounded];
+    
+    DB [shape=cylinder, label="Amazon Reviews dataset", style=filled, fillcolor=lightblue, fontname="Times-Italic"];
+    MR1 [shape=record, label="|MRJob1|", style="filled", fillcolor="#dddddd"];
+    MR2 [shape=record, label="|MRJob2|", style="filled", fillcolor="#dddddd"];
+    stop [shape=note, label="stopwords.txt", style=filled, fillcolor=white, fontname="Courier"];
+    cat [shape=note, label="category_set.txt", style=filled, fillcolor=white, fontname="Courier"]
+    out [shape=note, label="output.txt", style=filled, fillcolor=white, fontname="Courier"]
+    
+    DB -> MR1;
+    DB -> MR2;
+    MR1 -> cat;
+    stop -> MR2;
+    cat -> MR2;
+    MR2 -> out
+}
+
+digraph MRJob1 {
+    node [style=filled]
+    compound=true;
+    
+    subgraph cluster_mr1 {
+        label = "category_counter.py"
+        fontname = "Courier"
+        
+        mapper [shape=record, label="Mapper"]
+        reducer [shape=record, label="Reducer"]
+        kvM [shape=plaintext, style=none, fontname="Courier", label="(None, category)"]
+        kvR [shape=plaintext, style=none, fontname="Courier", label="(None, set(category))"]
+       
+        mapper -> kvM [dir=none]
+        kvM -> reducer
+        reducer -> kvR [dir=none]
+       
+    }
+    out [shape=note, fillcolor=white, label="category_set.txt", fontname="Courier"]
+   
+    kvR -> out;
+}
+
+
+digraph MRJob2 {
+    node [style=filled]
+    compound=true;
+    subgraph cluster_mr2 {
+        label="chi_computer.py"
+        fontname="Courier"
+        mapperInit [shape=record, label="{Mapper Init|load(stopwords + category set)|self.cat_word_abcd}"]
+        mapper [shape=record, label="{Mapper|category1: \{word1:\{A:☐, B:☐, C:☐, D:☐\}, word2: \{A:☐, B:☐, C:☐, D:☐\}|category2: \{word1:\{A:☐, B:☐, C:☐, D:☐\}, word2: \{A:☐, B:☐, C:☐, D:☐\}|...}"]
+        mapperFinal [shape=box, label="Mapper Final"]
+        
+        combiner [shape=record, label="Combiner"]
+        
+        reducer [shape=record, label="Reducer"]
+        kvM [shape=plaintext, style=none, fontname="Courier", label="(category, (word, A, B, C, D))"]
+        kvC [shape=plaintext, style=none, fontname="Courier", label="(category, (word, sum(A), sum(B), sum(C), sum(D)))"]
+        kvR [shape=plaintext, style=none, fontname="Courier", label="(category, {word:chi, word:chi, ...})"]
+        
+        mapperInit -> mapper
+        mapper -> mapperFinal
+        mapperFinal -> kvM [dir=none]
+        kvM -> combiner
+        combiner -> kvC[dir=none]
+        kvC -> reducer
+        reducer -> kvR[dir=none]
+        
+    }
+}

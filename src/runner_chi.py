@@ -9,11 +9,17 @@ if __name__ == "__main__":
     with job.make_runner() as runner:
         runner.run()
 
+        categories = dict()
         for key, value in job.parse_output(runner.cat_output()):
-            string = f"<{key}> "
+            categories[key] = value
             for word in value.keys():
-                string += f"{word}:{value[word]} "
                 set_of_words.add(word)
-            print(string)
+        
+        categories = sorted(categories.items(), key=lambda x: x[0])
         set_of_words = sorted(list(set_of_words))
+        for cat, words in categories:
+            print(cat, end="")
+            for word in words.items():
+                print(f" {word[0]}:{word[1]}", end="")
+            print()
         [print(w, end=" ") for w in set_of_words]
