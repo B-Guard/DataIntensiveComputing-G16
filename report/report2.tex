@@ -1,0 +1,139 @@
+\documentclass[11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage[sfdefault]{FiraSans}
+\usepackage[a4paper, left=2cm, right=2cm, top=2.5cm, bottom=2.5cm]{geometry}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{enumitem}
+\usepackage{titling}
+\usepackage{adjustbox}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage[utf8]{inputenc}
+\usepackage{wrapfig}
+\usepackage{babel}
+\usepackage{tcolorbox}
+\usepackage{fancyhdr}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{xr}
+\usepackage{ulem}
+\usepackage{lastpage}
+\usepackage{csquotes}
+\usepackage{tabularx}
+\usepackage{minted}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{standalone}
+\usepackage{footmisc}
+\usepackage{multicol}
+\usepackage{import}
+\usepackage{MnSymbol}
+\usepackage{hyperref}
+\usepackage{newunicodechar}
+\usepackage[all]{nowidow}
+\usepackage[acronym, toc]{glossaries}
+\usepackage[nottoc]{tocbibind}
+
+\hypersetup{
+    colorlinks,
+    linkcolor={blue!45!black},
+    citecolor={blue!50!black},
+    urlcolor={blue!80!black}
+}
+
+\def\UrlBreaks{\do\/\do-\do_}
+
+\def\semester{2024}
+\def\program{Master Data Science}
+\def\course{Data Intensive Computing}
+\def\coursefull{Data Intensive Computing}
+\def\assigmentlong{Group 16: Exercise 1}
+\def\assigment{Exercise I}
+\def\studentlong{Arash Behaein - 12324255\\
+                 Brais Guardado Collazo - 12233000\\
+                 Dinesh Thakur - 12334943}
+\def\student{A. Behaein, B. Guardado Collazo, D. Thakur}
+
+\pagestyle{fancy}
+\fancyhf{}
+\setlength{\headsep}{1.2cm}
+
+
+\lhead{
+    \includegraphics[height=1cm]{logo.png}
+}
+\chead
+{
+     \assigmentlong
+     }
+\rhead
+{
+     \semester
+}
+\lfoot
+{
+    \student \\
+    TU Wien - \program
+}
+\rfoot
+{
+            \thepage/\pageref{LastMainPage} \\
+            \today
+}
+
+\begin{document}
+\begin{titlepage}
+    \vspace*{\fill}
+    \centering
+      \vspace{-9cm}
+
+    \Huge{\textbf{\coursefull}}\\[1.5cm]
+    \Large{\assigmentlong}\\[2cm]
+    \large{\studentlong}\\
+    \vfill
+    \includegraphics[width=0.4\textwidth]{logo.png}
+
+        \vspace{0.7cm}
+    \large{Course: \course}\\
+    \large{Academic Year: \semester}\\
+    
+    \large{\today}\\
+\end{titlepage}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% PAGE 2
+
+\newpage
+% \pagestyle{empty}
+\tableofcontents
+% \newpage 
+\pagestyle{fancy}
+\setcounter{page}{1}
+
+\renewcommand{\abstractname}{Introduction}
+\vskip1cm
+
+\section{Introduction}
+
+\href{https://cseweb.ucsd.edu/~jmcauley/datasets/amazon/links.html}{Amazon Review Dataset 2014}
+
+\section{Problem Overview}
+
+
+
+\section{Approach \& Methodology}
+
+
+
+\section{Results}
+
+
+
+\section{Conclusion}
+
+
+
+\label{LastMainPage}
+\end{document}
