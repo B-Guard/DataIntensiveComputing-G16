@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from chi_computer import ChiSquare
+from ex1_chi_computer import ChiSquare
 
 if __name__ == "__main__":
 

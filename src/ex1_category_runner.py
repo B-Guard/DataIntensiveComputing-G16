@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from category_counter import CategoryCounter
+from ex1_category_counter import CategoryCounter
 if __name__ == '__main__':
     
     job = CategoryCounter()
