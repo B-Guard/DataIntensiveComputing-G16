@@ -19,7 +19,7 @@ stopwords_path = "../data/stopwords.txt"
 
 delim = "[ \t0-9\\(\\)\\[\\]\\{\\}\\.\\!\\?,;:\\+=\\-_\"'`~#@&%*%€$§\\\\/|<>^]+"
 
-VERBOSE = True
+VERBOSE = False
 DEVEL = True
 
 
