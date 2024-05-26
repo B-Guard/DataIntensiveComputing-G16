@@ -5,5 +5,7 @@ submission/
 *.pdf
 *.zip
 output.txt
+output_rdd.txt
 category_set.txt
 .ipynb_checkpoints/
+
