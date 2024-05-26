@@ -1,0 +1,1 @@
+spark-submit src/ex2_rdd.py
