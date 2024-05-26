@@ -140,7 +140,7 @@ outputFile = "../output_rdd.txt"
 formated_result = topKChiSquareRDD.map(
     lambda x: f"{x[0]} {' '.join([f'{y[0]}:{y[1]}' for y in x[1]])}"
 )
-formated_result = formated_result.coalesce(1).collect()
+formated_result = sorted(formated_result.coalesce(1).collect(), key=lambda x: x[0])
 
 # Get merged dictionary of terms
 merged_dict = sorted(
