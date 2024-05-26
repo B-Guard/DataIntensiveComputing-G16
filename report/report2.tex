@@ -117,23 +117,64 @@
 
 \section{Introduction}
 
-\href{https://cseweb.ucsd.edu/~jmcauley/datasets/amazon/links.html}{Amazon Review Dataset 2014}
+In the last assignment we performed some analysis of a large text corpus using MapReduce on a \textit{low level} library: \verb|mrjob|. In this assignment, although the tasks are not the same, we will be using a more flexible paradigm to analyze large amounts of data: Apache Spark.
+
+Spark is an open-source distributed general-purpose cluster-computing framework. It enhances the MapReduce model by introducing a more flexible data flow model that allows for more efficient processing of data.
 
 \section{Problem Overview}
 
+The assignment is divided in three parts. The first part is an exact copy of the previous assignment, but using Spark low level RDD data structure. The second part serves as introduction to the DataFrame API, where it it requested to find the 2000 top most relevant terms of the given corpus (again, the \href{https://cseweb.ucsd.edu/~jmcauley/datasets/amazon/links.html}{Amazon Review Dataset 2014}). The third part is arguably the most interesting one: we were tasked with training a ML model (SVM) to classify the reviews into their respective categories, making use of the Spark MLlib library.
 
 
 \section{Approach \& Methodology}
 
+\subsection{Selecting top 75 terms for each category}
 
+As stated, this part was an exact copy of the previous assignment, but using Spark RDDs. Therefore, we will not spend time explaining how $\chi^2$ is computed for every term $t$ and category $c$. It could be said that, the hardest part of solving this exercise was letting go of the MapReduce way of thinking and coming up with a solution with transformations and actions performed on RDDs.
+
+One of the most powerful features of Spark is persistence, that is, the ability to have intermediate results stored in memory (actually they themselves are not stored but the lineage, but this is not the point). This allowed us to create some intermediate RDDs that were used in multiple transformations, without having to recompute them every time.
+
+The first step is, as always, preprocessing. After reading the whole dataset, transformations are performed to retain only the relevant information (review text and category). Then, the review text was lowercased, split into tokens and stopwords were removed. Also, duplicates were dropped within each review. Let us call this intermediate result \underline{categoryReview}. The next step unfolded the review text into a list of tuples, where each tuple contains a term and the category of the review it belongs to, named \underline{unfoldedWords}. Using this RDD, we can compute the number of documents per word (i.e. the number of reviews that contain the word) and the number of documents per category (i.e. total count of documents belonging to a same category). The total number of documents can be easily computed as the aggregate sum of the reviews per category.
+
+With this, we are ready to compute the A, B and C values (note that D is not necessary, since having N, A, B and C already allows to compute D). The A values are a simple count of the number of reviews that contain the term and belong to the category, easily computable with the \underline{unfoldedWords} RDD. B values can be computed using the previously obtained A values and the number of documents per word, as the difference between the two (after joining the RDD on the relevant terms). Similarly, C values are computed as the difference between the number of documents per category and the A values.
+
+Joining all resulting RDDs allows to finally compute the $\chi^2$ value for each term and category. The top 75 terms per category are then selected and saved to a file.
+
+\subsection{Finding the 2000 most relevant terms}
+
+% ToDo
+
+
+\subsection{Text classification}
+
+% ToDo
 
 \section{Results}
 
+\subsection{Selecting top 75 terms for each category}
+
+It was requested to compare the results of the previous assignment with the current one. Both results are, naturally, similar. But not quite the same. We have noticed the following differences:
+\begin{itemize}
+    \item Out of the 22 categories, only 3 are exactly the same: \textit{Book}, \textit{CDs_and_Vynyl} and \textit{Movies_and_TV}.
+    \item Both results coincide perfectly up to the 5th term in both files, except for \textit{Musical_Instrument} and \textit{Health_and_Personal_Care} categories.
+    \item Additionally, around the top 20 terms in \textit{Musical_Instrument} are different for both results.
+    \item There are terms present in the original result which have dissapeared from the new one and vice versa.
+\end{itemize}
+
+These are indeed some curious observations, and unfortunately we cannot give explanations to it, since the dataset, stopwords and ReGex pattern are the same (\textit{right...?}).
+
+\subsection{Finding the 2000 most relevant terms}
+
+% ToDo
+
+\subsection{Text classification}
+
+% ToDo
 
 
 \section{Conclusion}
 
-
+% ToDo
 
 \label{LastMainPage}
 \end{document}
