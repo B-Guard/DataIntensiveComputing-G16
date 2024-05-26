@@ -4,8 +4,7 @@ logs/
 submission/
 *.pdf
 *.zip
-output.txt
-output_rdd.txt
+output*.txt
 category_set.txt
 .ipynb_checkpoints/
 
