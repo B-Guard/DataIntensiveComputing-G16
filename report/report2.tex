@@ -147,7 +147,7 @@ Joining all resulting RDDs allows to finally compute the $\chi^2$ value for each
 
 \subsection{Text classification}
 
-% ToDo - Arash
+In this part of the assignment, the aim was to classify the products into their respective categories using SVM classifier within a One-vs-Rest framework in Spark. As before, the process started by loading and preprocessing the dataset through tokenization and stopwords removal. Using TF-IDF features were extracted and vectors were normalized to ensure consistent input. Dataset was splitted into training, test and validation sets with 80-10-10  respectively for model evaluation. Using “StringIndexer” labels were encoded and hyperparameter tuning conducted using grid search with different regularization parameters (0.01, 0.1 and 1.0), maximum iterations (10,50) and feature standardization options (True and False). In the end the best model was selected through 3-fold CV based on f1-scores and it was validated on the test set.
 
 \section{Results}
 
@@ -169,7 +169,7 @@ These are indeed some curious observations, and unfortunately we cannot give exp
 
 \subsection{Text classification}
 
-% ToDo - Arash
+The final model achieved an F1 score of 0.548 on the test set, which shows a moderate level of accuracy in predicting the product categories from Amazon review texts. This result demonstrates the model's ability to predict on new data, which shows there is room for improvement in the classification performance.
 
 
 \section{Conclusion}
