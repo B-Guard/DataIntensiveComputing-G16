@@ -153,13 +153,14 @@ Stop words which are common words that we have used to remove from text data bec
 Preprocessing has been done to select relevant columns, converting text to lowercase, and removing rows with missing values.
 
 We have built a ML pipeline to process the text data through several stages:
-
-StringIndexer: Converted the category names into numerical labels.
-RegexTokenizer: Tokenizes the review text into words using a specified pattern.
-StopWordsRemover: Removed the stop words from the tokenized text.
-CountVectorizer: Converted the text documents to term frequency vectors.
-IDF: Computed the Inverse Document Frequency (IDF) of the term frequency vectors.
-ChiSqSelector: Selected the top features based on the Chi-square test.
+\begin{itemize}
+    \item \textbf{StringIndexer}: Converted the category names into numerical labels.
+    \item \textbf{RegexTokenizer}: Tokenizes the review text into words using a specified pattern.
+    \item \textbf{StopWordsRemover}: Removed the stop words from the tokenized text.
+    \item \textbf{CountVectorizer}: Converted the text documents to term frequency vectors.
+    \item \textbf{IDF}: Computed the Inverse Document Frequency (IDF) of the term frequency vectors.
+    \item \textbf{ChiSqSelector}: Selected the top features based on the Chi-square test.
+\end{itemize}
 
 Post that, we have fitted the pipeline to the data and transformed it to extract the selected features.
 
@@ -169,7 +170,7 @@ We have done the feature selection using Chi-square where top 2000 features indi
 
 \subsection{Text classification}
 
-In this part of the assignment, the aim was to classify the products into their respective categories using SVM classifier within a One-vs-Rest framework in Spark. As before, the process started by loading and preprocessing the dataset through tokenization and stopwords removal. Using TF-IDF features were extracted and vectors were normalized to ensure consistent input. Dataset was splitted into training, test and validation sets with 80-10-10  respectively for model evaluation. Using “StringIndexer” labels were encoded and hyperparameter tuning conducted using grid search with different regularization parameters (0.01, 0.1 and 1.0), maximum iterations (10,50) and feature standardization options (True and False). In the end the best model was selected through 3-fold CV based on f1-scores and it was validated on the test set.
+In this part of the assignment, the aim was to classify the products into their respective categories using SVM classifier within a One-vs-Rest framework in Spark. As before, the process started by loading and preprocessing the dataset through tokenization and stopwords removal. Using TF-IDF features were extracted and vectors were normalized to ensure consistent input. Dataset was split into training and test sets with 80-20 respectively for model evaluation. Using \verb|StringIndexer| labels were encoded and hyperparameter tuning conducted using grid search with different regularization parameters (0.01, 0.1 and 1.0), maximum iterations (3,10), feature standardization options (True and False) and number of features for the \verb|HashingTF| transformer (200, 2000). In the end the best model was selected through 3-fold CV based on f1-scores and it was validated on the test set.
 
 \section{Results}
 
@@ -183,7 +184,7 @@ It was requested to compare the results of the previous assignment with the curr
     \item There are terms present in the original result which have dissapeared from the new one and vice versa.
 \end{itemize}
 
-These are indeed some curious observations, and unfortunately we cannot give explanations to it, since the dataset, stopwords and ReGex pattern are the same (\textit{right...?}).
+These are indeed some curious observations, and unfortunately we cannot give explanations to them, since the dataset, stopwords and ReGex pattern are all the same (\textit{right...?}).
 
 \subsection{Finding the 2000 most relevant terms}
 
@@ -191,12 +192,16 @@ List has been extracted with top 2000 features indices. As in the previous assig
 
 \subsection{Text classification}
 
-The final model achieved an F1 score of 0.548 on the test set, which shows a moderate level of accuracy in predicting the product categories from Amazon review texts. This result demonstrates the model's ability to predict on new data, which shows there is room for improvement in the classification performance.
+The final model achieved an F1 score of 0.548 on the test set, which shows a moderate level of accuracy in predicting the product category from the review. This result is rather modest and clearly states the need and room for further performance improvement. But, at the end of the day, the final goal of this assignment was not to train the best possible model, but to learn how to use Spark and its libraries for data analysis and machine learning tasks.
 
 
 \section{Conclusion}
 
-% ToDo - whoever
+In this exercise we have been introduced to Spark, its RDDs, DataFrame API and the MLlib library. Although, we have measured slight lower perfomance (time-wise) compared to bare MapReduce implementations from last assignment, we blame it on the fact that Jupyter Notebooks were used for development, which probably are not the most efficient way of running Spark jobs. However, the flexibility and ease of use of Spark, above all regarding data persistence, has proven it a very powerful tool for data analysis.
+
+Due to time constraints, our group was forced to run the last part of the assignment during the last days before the deadline, and since (as always) the cluster suffers from overloading during those days, we were not able to run the model with the full dataset.
+
+
 
 \label{LastMainPage}
 \end{document}
