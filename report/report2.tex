@@ -142,8 +142,30 @@ Joining all resulting RDDs allows to finally compute the $\chi^2$ value for each
 
 \subsection{Finding the 2000 most relevant terms}
 
-% ToDo - Dinesh
+The objective of this task is to identify the 2000 most relevant terms from a dataset of Amazon reviews. This process involves several steps including text preprocessing, tokenization, removal of stop words, term frequency-inverse document frequency (TF-IDF) transformation, and feature selection using the Chi-square test. This report details the methodology and results of this analysis.
 
+We begin by setting up a Spark session, which is necessary for processing large datasets efficiently using PySpark.
+
+Depending on the development flag ('DEVEL'), we load either the development set or the full dataset. For this task, we will use the development set.
+
+Stop words which are common words that we have used to remove from text data because they do not carry significant meaning. We load these stop words from a file.
+
+Preprocessing has been done to select relevant columns, converting text to lowercase, and removing rows with missing values.
+
+We have built a ML pipeline to process the text data through several stages:
+
+StringIndexer: Converted the category names into numerical labels.
+RegexTokenizer: Tokenizes the review text into words using a specified pattern.
+StopWordsRemover: Removed the stop words from the tokenized text.
+CountVectorizer: Converted the text documents to term frequency vectors.
+IDF: Computed the Inverse Document Frequency (IDF) of the term frequency vectors.
+ChiSqSelector: Selected the top features based on the Chi-square test.
+
+Post that, we have fitted the pipeline to the data and transformed it to extract the selected features.
+
+We have done the feature selection using Chi-square where top 2000 features indices has been identified which has been used to extract the corresponding terms from the vocabulary.
+
+\includegraphics[height=12cm]{part2_pipeline.png}
 
 \subsection{Text classification}
 
@@ -165,7 +187,7 @@ These are indeed some curious observations, and unfortunately we cannot give exp
 
 \subsection{Finding the 2000 most relevant terms}
 
-% ToDo - Dinesh
+List has been extracted with top 2000 features indices. As in the previous assignment, we have focused on top 75 terms so comparison of results was not possible.
 
 \subsection{Text classification}
 
