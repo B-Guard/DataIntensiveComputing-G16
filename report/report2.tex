@@ -32,6 +32,7 @@
 \usepackage{import}
 \usepackage{MnSymbol}
 \usepackage{hyperref}
+\usepackage{booktabs}
 \usepackage{newunicodechar}
 \usepackage[all]{nowidow}
 \usepackage[acronym, toc]{glossaries}
@@ -123,7 +124,7 @@ Spark is an open-source distributed general-purpose cluster-computing framework.
 
 \section{Problem Overview}
 
-The assignment is divided in three parts. The first part is an exact copy of the previous assignment, but using Spark low level RDD data structure. The second part serves as introduction to the DataFrame API, where it it requested to find the 2000 top most relevant terms of the given corpus (again, the \href{https://cseweb.ucsd.edu/~jmcauley/datasets/amazon/links.html}{Amazon Review Dataset 2014}). The third part is arguably the most interesting one: we were tasked with training a ML model (SVM) to classify the reviews into their respective categories, making use of the Spark MLlib library.
+The assignment is divided into three parts. The first part is an exact copy of the previous assignment, but using Spark's low level RDD data structure. The second part serves as introduction to the DataFrame API, where it it requested to find the 2000 top most relevant terms of the given corpus (again, the \href{https://cseweb.ucsd.edu/~jmcauley/datasets/amazon/links.html}{Amazon Review Dataset 2014}). The third part is arguably the most interesting one: we were tasked with training a ML model (SVM) to classify the reviews into their respective categories, making use of the Spark's MLlib library.
 
 
 \section{Approach \& Methodology}
@@ -142,15 +143,9 @@ Joining all resulting RDDs allows to finally compute the $\chi^2$ value for each
 
 \subsection{Finding the 2000 most relevant terms}
 
-The objective of this task is to identify the 2000 most relevant terms from a dataset of Amazon reviews. This process involves several steps including text preprocessing, tokenization, removal of stop words, term frequency-inverse document frequency (TF-IDF) transformation, and feature selection using the Chi-square test. This report details the methodology and results of this analysis.
+The objective of this task is to identify the 2000 most relevant terms from a dataset of Amazon reviews. This process involves several steps including text preprocessing, tokenization, stopword removal, computing the term-frequency/inverse-document-frequency (TF-IDF) transformation, and feature selection using the Chi-square test. 
 
-We begin by setting up a Spark session, which is necessary for processing large datasets efficiently using PySpark.
-
-Depending on the development flag ('DEVEL'), we load either the development set or the full dataset. For this task, we will use the development set.
-
-Stop words which are common words that we have used to remove from text data because they do not carry significant meaning. We load these stop words from a file.
-
-Preprocessing has been done to select relevant columns, converting text to lowercase, and removing rows with missing values.
+We begin by setting up a Spark session, which is necessary for processing large datasets efficiently using \verb|PySpark|. Stop words which are common words that we have used to remove from text data because they do not carry significant meaning. We load these stop words from a file. Preprocessing has been done to select relevant columns, converting text to lowercase, and removing rows with missing values.
 
 We have built a ML pipeline to process the text data through several stages:
 \begin{itemize}
@@ -162,26 +157,44 @@ We have built a ML pipeline to process the text data through several stages:
     \item \textbf{ChiSqSelector}: Selected the top features based on the Chi-square test.
 \end{itemize}
 
-Post that, we have fitted the pipeline to the data and transformed it to extract the selected features.
+Figure \ref{fig:pipe2} illustrates this pipeline.
 
-We have done the feature selection using Chi-square where top 2000 features indices has been identified which has been used to extract the corresponding terms from the vocabulary.
+\begin{figure}
+    \centering
+    \includegraphics[width=0.95\linewidth]{part2_pipeline.png}
+    \caption{Finding top 2000 term pipeline}
+    \label{fig:pipe2}
+\end{figure}
 
-\includegraphics[height=12cm]{part2_pipeline.png}
+Post that, the dataset was fed to the pipeline, first to fit it, then to transform the data and extract the selected features.
+
+We have done the feature selection using Chi-square and top 2000 features. Using these selected features, the total vocabulary fed into the \textbf{CountTokenizer} was identified.
 
 \subsection{Text classification}
 
-In this part of the assignment, the aim was to classify the products into their respective categories using SVM classifier within a One-vs-Rest framework in Spark. As before, the process started by loading and preprocessing the dataset through tokenization and stopwords removal. Using TF-IDF features were extracted and vectors were normalized to ensure consistent input. Dataset was split into training and test sets with 80-20 respectively for model evaluation. Using \verb|StringIndexer| labels were encoded and hyperparameter tuning conducted using grid search with different regularization parameters (0.01, 0.1 and 1.0), maximum iterations (3,10), feature standardization options (True and False) and number of features for the \verb|HashingTF| transformer (200, 2000). In the end the best model was selected through 3-fold CV based on f1-scores and it was validated on the test set.
+In this part of the assignment, the aim was to classify the products into their respective categories based on the review text. This was achieved using a SVM classifier within a One-vs-Rest framework in Spark. As before, the process started by loading and preprocessing the dataset through tokenization and stopwords removal. Using TF-IDF, features were extracted and vectors were normalized to ensure consistent input. Dataset was split into training and test sets at 80-20 ratio respectively. Using \verb|StringIndexer| labels were encoded and hyperparameter tuning conducted using \verb|ParamGrid| search with different regularization parameters (0.01, 0.1 and 1.0), maximum iterations (3, 10), feature standardization options (\textit{True} and \textit{False}) and number of features for the \verb|HashingTF| transformer (200, 2000). In the end the best model was selected through a 3-fold \verb|CrossValidator| based on F1 score. Final score was computed with the test set.
+
+Figure \ref{fig:pipe3} clearly showcases the flow of data through Spark's DataFrame API.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.95\linewidth]{ex2_part3_pipe.png}
+    \caption{Text classification pipeline}
+    \label{fig:pipe3}
+\end{figure}
 
 \section{Results}
 
 \subsection{Selecting top 75 terms for each category}
 
+Before delving into the proper analysis, we have deemed it necessary to mention our attempt at implementing this part using Scala, since we figured it would be more efficient (and also more fun, since Scala is a new language to us). But, against all our efforts, the implementation in this language was not successful. The code runs without errors, but the results make absolutely no sense (some terms have negative $\chi^2$). Most likely there is a bug in our code, but we have not managed to find it. Therefore, we were forced to stick with Python. Nonetheless, we have included both implementations in the \verb|src| folder.
+
 It was requested to compare the results of the previous assignment with the current one. Both results are, naturally, similar. But not quite the same. We have noticed the following differences:
 \begin{itemize}
-    \item Out of the 22 categories, only 3 are exactly the same: \textit{Book}, \textit{CDs_and_Vynyl} and \textit{Movies_and_TV}.
-    \item Both results coincide perfectly up to the 5th term in both files, except for \textit{Musical_Instrument} and \textit{Health_and_Personal_Care} categories.
-    \item Additionally, around the top 20 terms in \textit{Musical_Instrument} are different for both results.
-    \item There are terms present in the original result which have dissapeared from the new one and vice versa.
+    \item Out of the 22 categories, only 3 are exactly the same: \textit{Book}, \textit{CDs\_and\_Vynyl} and \textit{Movies\_and\_TV}.
+    \item Both results coincide perfectly up to the 5th term in both files, except for \textit{Musical\_Instrument} and \textit{Health\_and\_Personal\_Care} categories.
+    \item Additionally, around the top 20 terms in \textit{Musical\_Instrument} are different for both results.
+    \item There are terms present in the original result which have disappeared from the new one and vice versa.
 \end{itemize}
 
 These are indeed some curious observations, and unfortunately we cannot give explanations to them, since the dataset, stopwords and ReGex pattern are all the same (\textit{right...?}).
