@@ -7,4 +7,5 @@ submission/
 output*.txt
 category_set.txt
 .ipynb_checkpoints/
+*.jpg
 
