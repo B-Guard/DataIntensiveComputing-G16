@@ -41,3 +41,12 @@ Preprocessing tasks for every document:
 ### Exercise 2
 [Exercise sheet](exercise_sheets/ex2.html)
 
+### Exercise 3
+
+[Exercise sheet](exercise_sheets/Exercise%203_2024S.pdf)
+
+#### Local execution
+Some dependencies are needed for this project. Install them with `pip install -r requirements.txt`.
+
+For the server to run properly, you need the YOLO model weights in the appropiate location. The script expects to find them under the folder [yolo_tiny_configs](/yolo_tiny_configs/), which is already provided in this repo.
+To get the server running, execute `python src/ex3_local_server.py`. After this, you should be ready to execute `python src/ex3_client.py <input_folder> http://localhost:5000/upload`, where `<input_folder>` is the location of your test images.
