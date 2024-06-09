@@ -5,10 +5,22 @@ import json
 import os
 import sys
 from pathlib import Path
-from datetime import datetime
+import psutil
+import time
+import argparse
 
-# Save flag
-SAVE = True
+parser = argparse.ArgumentParser(description='Process images and send them to a server.')
+parser.add_argument('input_folder', type=str, help='The input folder containing images to process.')
+parser.add_argument('server_url', type=str, help='The server URL to send processed images to.')
+parser.add_argument('--save', action='store_true', help='Save the processed images locally.')
+parser.add_argument('--print', action='store_true', help='Print the response for each image.')
+
+# Parse arguments
+args = parser.parse_args()
+
+# Use the flags from arguments
+SAVE = args.save
+PRINT = args.print
 
 # Create logs folder
 def create_logs_folder():
@@ -35,16 +47,18 @@ def post_image(image_path, server_url, log_filename):
         # Process the response
         if response.status_code == 200:
             response_data = response.json()
-            print(f"Response for image {image_path}:")
-            print(json.dumps(response_data, indent=1))
+            if PRINT:
+                print(f"Response for image {image_path}:")
+                print(json.dumps(response_data, indent=1))
 
             # Append the response to a single log file
-            result = {
-                "image_name": os.path.basename(image_path),
-                "uuid": image_id,
-                "objects": response_data["objects"],
-            }
-            append_to_log(log_filename, result)
+            if SAVE:
+                result = {
+                    "image_name": os.path.basename(image_path),
+                    "uuid": image_id,
+                    "objects": response_data["objects"],
+                }            
+                append_to_log(log_filename, result)
         else:
             print(
                 f"Failed to get a response for image {image_path}, status code: {response.status_code}"
@@ -68,8 +82,8 @@ def append_to_log(log_filename, data):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 3:
-        print("Usage: Please provide the input folder and the server URL as arguments.")
+    if not os.path.isdir(args.input_folder):
+        print(f"The input folder {args.input_folder} does not exist.")
         sys.exit(1)
 
     input_folder = sys.argv[1]
@@ -82,10 +96,31 @@ if __name__ == "__main__":
 
     # Create logs folder and log filename
     create_logs_folder()
-    log_filename = f'logs/results_{datetime.now().strftime("%Y%m%d")}.json'
+    log_filename = f'logs/localYOLO.json'
+
+    # Start benchmark
+    start_time = time.time()
+    process = psutil.Process(os.getpid())
+    start_cpu_times = process.cpu_times()
 
     # Process each image in the input folder
     for image_file in Path(input_folder).glob("*.*"):
         if image_file.suffix.lower() in [".png", ".jpg", ".jpeg"]:
             post_image(str(image_file), server_url, log_filename)
+    
+    # End benchmark
+    end_time = time.time()
+    cpu_usage_end = process.cpu_percent(interval=None)
+    end_cpu_times = process.cpu_times()
+
+    # Calculate and print benchmark results
+    total_time = end_time - start_time
+    user_time = end_cpu_times.user - start_cpu_times.user
+    system_time = end_cpu_times.system - start_cpu_times.system
+
+
+    print(f"\nBenchmark Results:")
+    print(f"\tTotal time taken: {total_time:.2f} seconds")
+    print(f"\tUser CPU time: {user_time:.2f} seconds")
+    print(f"\tSystem CPU time: {system_time:.2f} seconds")
 
