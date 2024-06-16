@@ -1,5 +1,8 @@
 __pycache__/
+.venv
 data/*.json
+results/*.csv
+src/python/
 logs/
 submission/
 *.pdf
